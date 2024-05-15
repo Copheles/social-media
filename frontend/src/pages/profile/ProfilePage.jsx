@@ -5,8 +5,6 @@ import Posts from "../../components/common/Posts";
 import ProfileHeaderSkeleton from "../../components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
 
-import { POSTS } from "../../utils/db/dummy";
-
 import { FaArrowLeft } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { FaLink } from "react-icons/fa";
@@ -21,6 +19,7 @@ const ProfilePage = () => {
   const [coverImg, setCoverImg] = useState(null);
   const [profileImg, setProfileImg] = useState(null);
   const [feedType, setFeedType] = useState("posts");
+  const [numOfPosts, setNumOfPosts] = useState(0);
 
   const coverImgRef = useRef(null);
   const profileImgRef = useRef(null);
@@ -69,6 +68,10 @@ const ProfilePage = () => {
     }
   };
 
+  const handleSetNumOfPost = (posts) => {
+    setNumOfPosts(posts);
+  };
+
   useEffect(() => {
     refetch();
   }, [username, refetch]);
@@ -79,7 +82,9 @@ const ProfilePage = () => {
         {/* HEADER */}
         {(isLoading || isRefetching) && <ProfileHeaderSkeleton />}
         {!isLoading && !isRefetching && !user && (
-          <p className="text-center text-lg mt-4 text-gray-300">User not found</p>
+          <p className="text-center text-lg mt-4 text-gray-300">
+            User not found
+          </p>
         )}
         <div className="flex flex-col">
           {!isLoading && !isRefetching && user && (
@@ -93,7 +98,7 @@ const ProfilePage = () => {
                     {user?.fullName}
                   </p>
                   <span className="text-sm text-slate-500">
-                    {POSTS?.length} posts
+                    {numOfPosts} posts
                   </span>
                 </div>
               </div>
@@ -224,7 +229,7 @@ const ProfilePage = () => {
               </div>
               <div className="flex w-full border-b border-gray-700 mt-4">
                 <div
-                  className="flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 relative cursor-pointer"
+                  className="flex justify-center flex-1 p-3 hover:bg-gray-700 transition duration-300 relative cursor-pointer"
                   onClick={() => setFeedType("posts")}
                 >
                   Posts
@@ -233,7 +238,7 @@ const ProfilePage = () => {
                   )}
                 </div>
                 <div
-                  className="flex justify-center flex-1 p-3 text-slate-500 hover:bg-secondary transition duration-300 relative cursor-pointer"
+                  className="flex justify-center flex-1 p-3 text-slate-500 hover:bg-gray-700 transition duration-300 relative cursor-pointer"
                   onClick={() => setFeedType("likes")}
                 >
                   Likes
@@ -245,7 +250,7 @@ const ProfilePage = () => {
             </>
           )}
 
-          <Posts feedType={feedType} username={username} userId={user?._id} />
+          <Posts feedType={feedType} username={username} userId={user?._id} handleSetNumOfPost={handleSetNumOfPost} />
         </div>
       </div>
     </>

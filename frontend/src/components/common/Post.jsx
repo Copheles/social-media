@@ -1,4 +1,4 @@
-import { FaRegComment } from "react-icons/fa";
+import { FaEdit, FaRegComment } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa6";
@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
+import { BsThreeDots } from "react-icons/bs";
 
 import LoadingSpinner from "./LoadingSpinner";
 import { formatPostDate } from "../../utils/date";
@@ -16,7 +17,7 @@ const Post = ({ post }) => {
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const queryClient = useQueryClient();
   const postOwner = post.user;
-  const isLiked = post.likes.includes(authUser._id);
+  const isLiked = post?.likes.includes(authUser._id);
 
   const isMyPost = authUser._id === post.user._id;
 
@@ -38,7 +39,8 @@ const Post = ({ post }) => {
         throw new Error(error);
       }
     },
-    onSuccess: () => {
+    onSuccess: (deletedPost) => {
+      console.log("deleted Post id", deletedPost);
       toast.success("Post deleted successfully", {
         position: "bottom-center",
         className: "bg-gray-500 text-white text-sm",
@@ -47,7 +49,18 @@ const Post = ({ post }) => {
           secondary: "#fff",
         },
       });
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      // queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.setQueryData(["posts"], (oldData) => {
+        const newPosts = oldData.pages.map((page) => {
+          return {
+            ...page,
+            posts: page.posts.filter((p) => {
+              return p._id !== deletedPost.id;
+            }),
+          };
+        });
+        return { pageParams: oldData.pageParams, pages: newPosts };
+      });
     },
   });
 
@@ -77,7 +90,6 @@ const Post = ({ post }) => {
             ...page,
             posts: page.posts.map((p) => {
               if (p._id === post._id) {
-              
                 return { ...p, likes: updatedLikes };
               }
               return p;
@@ -163,18 +175,42 @@ const Post = ({ post }) => {
               <span>·</span>
               <span>{formattedDate}</span>
             </span>
-            {isMyPost && (
-              <span className="flex justify-end flex-1">
-                {!isDeleting && (
-                  <FaTrash
-                    className="cursor-pointer hover:text-red-500"
-                    onClick={handleDeletePost}
-                  />
-                )}
 
-                {isDeleting && <LoadingSpinner size="sm" />}
-              </span>
-            )}
+            <div className="dropdown dropdown-bottom flex justify-end flex-1 ">
+              <div
+                tabIndex={0}
+                className="border border-transparent hover:border-gray-700 rounded-full p-2"
+              >
+                <BsThreeDots />
+              </div>
+              <ul
+                tabIndex={0}
+                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+              >
+                <li onClick={handleDeletePost} className="text-gray-300">
+                  {isMyPost && (
+                    <span>
+                      {!isDeleting && (
+                        <FaTrash className="cursor-pointer hover:text-red-500" />
+                      )}
+                      {isDeleting && <LoadingSpinner size="sm" />}
+                      Delete
+                    </span>
+                  )}
+                </li>
+                {/* <li className="text-gray-300">
+                  {isMyPost && (
+                    <span>
+                      {!isDeleting && (
+                        <FaEdit className="cursor-pointer hover:text-red-500" />
+                      )}
+                      {isDeleting && <LoadingSpinner size="sm" />}
+                      Edit
+                    </span>
+                  )}
+                </li> */}
+              </ul>
+            </div>
           </div>
           <div className="flex flex-col gap-3 overflow-hidden">
             <span className="mt-2 text-sm p-2 text-gray-200 font-normal">
@@ -252,7 +288,7 @@ const Post = ({ post }) => {
                       value={comment}
                       onChange={(e) => setComment(e.target.value)}
                     />
-                    <button className="btn btn-primary rounded-full btn-sm text-white px-4">
+                    <button className="btn btn-primary rounded btn-sm text-white px-4">
                       {isCommenting ? <LoadingSpinner size="md" /> : "Post"}
                     </button>
                   </form>

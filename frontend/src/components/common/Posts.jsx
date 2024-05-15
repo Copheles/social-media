@@ -4,7 +4,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 
-const Posts = ({ feedType, username, userId }) => {
+const Posts = ({ feedType, username, userId, handleSetNumOfPost = null }) => {
   const getPostEndpoint = () => {
     switch (feedType) {
       case "forYou":
@@ -41,6 +41,10 @@ const Posts = ({ feedType, username, userId }) => {
 
         if (!res.ok) {
           throw new Error(data.error || "Something went wrong");
+        }
+
+        if(handleSetNumOfPost){
+          handleSetNumOfPost(data.total)
         }
         return data;
       } catch (error) {
