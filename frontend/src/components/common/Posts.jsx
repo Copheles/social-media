@@ -33,7 +33,7 @@ const Posts = ({ feedType, username, userId, handleSetNumOfPost = null }) => {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["posts"],
+    queryKey: ["posts" + feedType],
     queryFn: async ({ pageParam = 1 }) => {
       try {
         const res = await fetch(POST_ENDPOINT + `?page=${pageParam}`);
@@ -43,8 +43,8 @@ const Posts = ({ feedType, username, userId, handleSetNumOfPost = null }) => {
           throw new Error(data.error || "Something went wrong");
         }
 
-        if(handleSetNumOfPost){
-          handleSetNumOfPost(data.total)
+        if (handleSetNumOfPost) {
+          handleSetNumOfPost(data.total);
         }
         return data;
       } catch (error) {
@@ -59,7 +59,7 @@ const Posts = ({ feedType, username, userId, handleSetNumOfPost = null }) => {
   });
 
   useEffect(() => {
-    if ((inView && hasNextPage)) {
+    if (inView && hasNextPage) {
       fetchNextPage();
     }
   }, [fetchNextPage, inView, hasNextPage]);
@@ -88,7 +88,7 @@ const Posts = ({ feedType, username, userId, handleSetNumOfPost = null }) => {
             return (
               <div key={page.page}>
                 {page.posts.map((post) => (
-                  <Post key={post._id} post={post} />
+                  <Post key={post._id} post={post} type={feedType} />
                 ))}
               </div>
             );

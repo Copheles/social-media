@@ -1,4 +1,4 @@
-import { FaEdit, FaRegComment } from "react-icons/fa";
+import { FaRegComment } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { FaRegHeart } from "react-icons/fa";
 import { FaRegBookmark } from "react-icons/fa6";
@@ -12,7 +12,7 @@ import { BsThreeDots } from "react-icons/bs";
 import LoadingSpinner from "./LoadingSpinner";
 import { formatPostDate } from "../../utils/date";
 
-const Post = ({ post }) => {
+const Post = ({ post, type }) => {
   const [comment, setComment] = useState("");
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const queryClient = useQueryClient();
@@ -50,7 +50,7 @@ const Post = ({ post }) => {
         },
       });
       // queryClient.invalidateQueries({ queryKey: ["posts"] });
-      queryClient.setQueryData(["posts"], (oldData) => {
+      queryClient.setQueryData(["posts" + type], (oldData) => {
         const newPosts = oldData.pages.map((page) => {
           return {
             ...page,
@@ -84,7 +84,7 @@ const Post = ({ post }) => {
       // queryClient.invalidateQueries({ queryKey: ["posts"] });
 
       // instead, update the cache directly for that post
-      queryClient.setQueryData(["posts"], (oldData) => {
+      queryClient.setQueryData(["posts" + type], (oldData) => {
         const newPosts = oldData.pages.map((page) => {
           return {
             ...page,
@@ -127,7 +127,7 @@ const Post = ({ post }) => {
     onSuccess: () => {
       toast.success("Comment posted successfully");
       setComment("");
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      queryClient.invalidateQueries({ queryKey: ["posts" + type] });
     },
     onError: (error) => {
       toast.error(error.message);
