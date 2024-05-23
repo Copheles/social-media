@@ -4,7 +4,7 @@ import { IoCloseSharp } from "react-icons/io5";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 
-const CreatePost = () => {
+const CreatePost = ({ feedType }) => {
   const [text, setText] = useState("");
   const [img, setImg] = useState(null);
   const imgRef = useRef(null);
@@ -40,6 +40,8 @@ const CreatePost = () => {
     onSuccess: () => {
       setText("");
       setImg(null);
+
+      queryClient.invalidateQueries({ queryKey: ["posts" + feedType] });
       toast.success("Post created successfully", {
         position: "bottom-center",
         className: "bg-gray-500 text-white text-sm",
@@ -48,7 +50,6 @@ const CreatePost = () => {
           secondary: "#fff",
         },
       });
-      queryClient.invalidateQueries({ queryKey: ["posts"] });
     },
   });
 
@@ -67,7 +68,6 @@ const CreatePost = () => {
       reader.readAsDataURL(file);
     }
   };
-
 
   return (
     <div className="flex px-4 pt-8 items-start gap-4 border-b border-gray-700">

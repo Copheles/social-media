@@ -15,16 +15,26 @@ const useFollow = () => {
 				if (!res.ok) {
 					throw new Error(data.error || "Something went wrong!");
 				}
-				return;
+
+				console.log('data: ',data);
+				return data;
 			} catch (error) {
 				throw new Error(error.message);
 			}
 		},
-		onSuccess: () => {
+		onSuccess: (data) => {
 			Promise.all([
 				queryClient.invalidateQueries({ queryKey: ["suggestedUsers"] }),
 				queryClient.invalidateQueries({ queryKey: ["authUser"] }),
 			]);
+			toast.success(data.message, {
+        position: "bottom-center",
+        className: "bg-gray-500 text-white text-sm",
+        iconTheme: {
+          primary: "#212e31",
+          secondary: "#fff",
+        },
+      });
 		},
 		onError: (error) => {
 			toast.error(error.message);

@@ -8,16 +8,22 @@ import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
 import { BsThreeDots } from "react-icons/bs";
+import { MdPersonAddAlt1, MdPersonRemoveAlt1 } from "react-icons/md";
 
 import LoadingSpinner from "./LoadingSpinner";
 import { formatPostDate } from "../../utils/date";
+import useFollow from "../../hooks/useFollow";
 
 const Post = ({ post, type }) => {
   const [comment, setComment] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { follow, isPending } = useFollow();
+
   const { data: authUser } = useQuery({ queryKey: ["authUser"] });
   const queryClient = useQueryClient();
   const postOwner = post.user;
   const isLiked = post?.likes.includes(authUser._id);
+  const amIFollowing = authUser?.following.includes(post.user?._id);
 
   const isMyPost = authUser._id === post.user._id;
 
@@ -149,6 +155,15 @@ const Post = ({ post, type }) => {
     likePost();
   };
 
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleItemClick = (action) => {
+    action();
+    setIsDropdownOpen(false); // Close the dropdown
+  };
+
   return (
     <>
       <div className="flex gap-2 items-start p-4 border-b border-gray-700">
@@ -180,25 +195,59 @@ const Post = ({ post, type }) => {
               <div
                 tabIndex={0}
                 className="border border-transparent hover:border-gray-700 rounded-full p-2"
+                onClick={toggleDropdown}
               >
                 <BsThreeDots />
               </div>
-              <ul
-                tabIndex={0}
-                className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
-              >
-                <li onClick={handleDeletePost} className="text-gray-300">
-                  {isMyPost && (
-                    <span>
-                      {!isDeleting && (
-                        <FaTrash className="cursor-pointer hover:text-red-500" />
-                      )}
-                      {isDeleting && <LoadingSpinner size="sm" />}
-                      Delete
-                    </span>
-                  )}
-                </li>
-                {/* <li className="text-gray-300">
+              {isDropdownOpen && (
+                <ul
+                  tabIndex={0}
+                  className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+                >
+                  <li className="text-gray-300">
+                    {!isMyPost &&
+                      (amIFollowing ? (
+                        <span
+                          className="font-bold"
+                          onClick={() =>
+                            handleItemClick(() => follow(post.user._id))
+                          }
+                        >
+                          {isPending ? (
+                            <span className="loading loading-spinner loading-xs"></span>
+                          ) : (
+                            <MdPersonRemoveAlt1 className="cursor-pointer" />
+                          )}
+                          UnFollow
+                        </span>
+                      ) : (
+                        <span
+                          className="font-bold"
+                          onClick={() =>
+                            handleItemClick(() => follow(post.user._id))
+                          }
+                        >
+                          {isPending ? (
+                            <span className="loading loading-spinner loading-xs"></span>
+                          ) : (
+                            <MdPersonAddAlt1 className="cursor-pointer" />
+                          )}
+                          Follow
+                        </span>
+                      ))}
+                  </li>
+                  <li onClick={handleDeletePost} className="text-gray-300">
+                    {isMyPost && (
+                      <span className="font-bold">
+                        {!isDeleting && (
+                          <FaTrash className="cursor-pointer hover:text-red-500" />
+                        )}
+                        {isDeleting && <LoadingSpinner size="sm" />}
+                        Delete
+                      </span>
+                    )}
+                  </li>
+                  {/* <li className="text-gray-300">
                   {isMyPost && (
                     <span>
                       {!isDeleting && (
@@ -209,7 +258,8 @@ const Post = ({ post, type }) => {
                     </span>
                   )}
                 </li> */}
-              </ul>
+                </ul>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-3 overflow-hidden">
