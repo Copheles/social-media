@@ -1,5 +1,5 @@
-# Job-Myanmar
-Fully Featured Job Website with comment replies system implementing infinite tree data structure with recursive functions.
+# Social Media
+twitter like social media with notification system & follow/unfollow system and infinite scrolling.
 
 
 ### Development Stack
