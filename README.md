@@ -18,6 +18,7 @@ twitter like social media with notification system & follow/unfollow system and 
 - SignIn/SignUp Pages
 - Responsive Layouts
 - Authentication and Authorization
+- Follow/UnFollow Users
 - Upload Photo With Cloudinary
 - Post (CRUD)
 - Infinite Scrolling With React Query
