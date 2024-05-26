@@ -26,3 +26,7 @@ twitter like social media with notification system & follow/unfollow system and 
 - Logout system
 - Displaying recommended users
 - Comment (CRUD)
+
+![sign in](https://github.com/Copheles/social-media/assets/61428497/e8848078-fbb7-4056-977b-5f57527cba2f)
+![home](https://github.com/Copheles/social-media/assets/61428497/22d03451-9a4a-4c80-a541-f40b8d17349b)
+![profile](https://github.com/Copheles/social-media/assets/61428497/4941dce0-a2c4-4caf-89e1-64c4a28fd1ff)
