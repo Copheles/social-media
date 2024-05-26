@@ -183,7 +183,7 @@ const Post = ({ post, type }) => {
             >
               {postOwner.fullName}
             </Link>
-            <span className="text-gray-500 flex gap-1 text-sm">
+            <span className="text-gray-500 flex gap-1 text-xs md:text-sm">
               <Link to={`/profile/${postOwner.username}`}>
                 @{postOwner.username}
               </Link>
