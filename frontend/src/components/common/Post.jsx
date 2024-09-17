@@ -262,8 +262,8 @@ const Post = ({ post, type }) => {
               )}
             </div>
           </div>
-          <div className="flex flex-col gap-3 overflow-hidden">
-            <span className="mt-2 text-sm p-2 text-gray-200 font-normal">
+          <div className="flex flex-col gap-3 overflow-hidden max-w-3xl ">
+            <span className="mt-2 text-sm p-2 text-gray-200 font-normal w-full">
               {post.text}
             </span>
             {post.img && (

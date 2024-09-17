@@ -82,6 +82,7 @@ const CreatePost = ({ feedType }) => {
             className="textarea w-full p-0 text-md resize-none border-none focus:outline-none border-gray-800"
             placeholder="What's on your mind?"
             value={text}
+            maxLength={500}
             onChange={(e) => setText(e.target.value)}
           />
           {!img && (
